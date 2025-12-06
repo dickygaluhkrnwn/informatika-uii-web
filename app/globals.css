@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* --- UII Brand Colors (Didefinisikan di sini untuk v4) --- */
+  --color-uii-navy: #002664;
+  --color-uii-navy-light: #003380;
+  
+  --color-uii-gold: #F2A900;
+  --color-uii-gold-hover: #d49200;
+
+  /* Font Variables (Sinkron dengan layout.tsx) */
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* --- Custom Utilities --- */
+@layer components {
+  /* Efek Kaca (Glassmorphism) */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
+    @apply dark:bg-slate-900/60 dark:border-slate-700/50;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Container Utama */
+  .container-width {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
 
+/* Global Styles */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-slate-50 text-slate-900 font-sans;
+  @apply dark:bg-slate-950 dark:text-slate-50;
+}
+
+/* Scrollbar Keren */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-md dark:bg-slate-700;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400 dark:bg-slate-600;
 }
