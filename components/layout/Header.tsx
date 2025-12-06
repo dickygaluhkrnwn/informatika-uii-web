@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X } from "lucide-react";
+import { Search, X, Menu } from "lucide-react";
 
 interface HeaderProps {
   categories: string[];
@@ -21,6 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSearchChange,
 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State untuk menu mobile
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -29,16 +30,19 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }, [isSearchOpen]);
 
+  // Tutup menu saat kategori dipilih
+  const handleCategoryClick = (category: string) => {
+    onSelectCategory(category);
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-300">
       <div className="container-width py-3 md:py-0">
-        {/* Tambahkan md:flex-nowrap agar di desktop tidak turun baris */}
-        <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-y-4 md:gap-y-0 md:h-20">
+        <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-y-4 md:gap-y-0 md:h-20 relative">
           
           {/* 1. Logo Section (Kiri) */}
-          {/* Update: Perkecil width container desktop ke 200px */}
           <div className={`flex items-center shrink-0 order-1 md:w-[200px] transition-opacity duration-300 ${isSearchOpen ? 'opacity-0 md:opacity-100 hidden md:flex' : 'opacity-100'}`}>
-            {/* Update: Perkecil ukuran visual logo (h-9 dan w-48) */}
             <div className="relative h-9 w-48 md:w-52">
                <Image 
                  src="/images/program-studi-nformatika.png"
@@ -50,16 +54,15 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* 2. Search Section (Kanan) */}
-          {/* Update: Tambahkan shrink-0 dan samakan width container ke 200px agar simetris */}
-          <div className="flex justify-end items-center order-2 md:order-3 ml-auto md:ml-0 md:w-[200px] shrink-0">
+          {/* 2. Search Section & Mobile Menu Button (Kanan) */}
+          <div className="flex justify-end items-center gap-2 order-2 md:order-3 ml-auto md:ml-0 md:w-[200px] shrink-0">
             <AnimatePresence mode="wait">
               {isSearchOpen ? (
                 <motion.div 
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: "100%" }}
                   exit={{ opacity: 0, width: 0 }}
-                  className="flex items-center w-full bg-slate-100 dark:bg-slate-800 rounded-full px-4 py-2 overflow-hidden"
+                  className="flex items-center w-full bg-slate-100 dark:bg-slate-800 rounded-full px-4 py-2 overflow-hidden absolute left-0 right-0 z-20 md:relative md:w-auto"
                 >
                   <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
                   <input
@@ -75,21 +78,35 @@ export const Header: React.FC<HeaderProps> = ({
                   </button>
                 </motion.div>
               ) : (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  onClick={() => setIsSearchOpen(true)}
-                  className="p-2.5 rounded-full bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-                >
-                  <Search className="w-5 h-5" />
-                </motion.button>
+                <>
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    onClick={() => setIsSearchOpen(true)}
+                    className="p-2.5 rounded-full bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+                  >
+                    <Search className="w-5 h-5" />
+                  </motion.button>
+
+                  {/* Mobile Menu Toggle Button */}
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="md:hidden p-2.5 rounded-full bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+                  >
+                    {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                  </motion.button>
+                </>
               )}
             </AnimatePresence>
           </div>
 
-          {/* 3. Category Tabs (Tengah) */}
-          <div className="w-full md:w-auto md:flex-1 md:flex md:justify-center order-3 md:order-2 overflow-x-auto md:overflow-visible no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+          {/* 3. Category Tabs (Desktop: Tengah | Mobile: Dropdown) */}
+          
+          {/* A. Tampilan Desktop (Horizontal) - Hidden di Mobile */}
+          <div className="hidden md:w-auto md:flex-1 md:flex md:justify-center order-3 md:order-2">
             <div className="flex gap-4 lg:gap-6 min-w-max md:min-w-0 border-b border-transparent md:justify-center">
               {categories.map((category) => {
                 const isActive = activeCategory === category;
@@ -106,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
                     {category}
                     {isActive && (
                       <motion.div
-                        layoutId="activeTabIndicator"
+                        layoutId="activeTabIndicatorDesktop"
                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-uii-navy dark:bg-uii-gold rounded-t-full"
                       />
                     )}
@@ -115,6 +132,37 @@ export const Header: React.FC<HeaderProps> = ({
               })}
             </div>
           </div>
+
+          {/* B. Tampilan Mobile (Dropdown Menu) */}
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -20, height: 0 }}
+                className="w-full order-4 md:hidden overflow-hidden bg-slate-50 dark:bg-slate-900 rounded-b-xl border-t border-slate-200 dark:border-slate-800 mt-2 shadow-lg"
+              >
+                <div className="flex flex-col p-4 gap-2">
+                  {categories.map((category) => {
+                    const isActive = activeCategory === category;
+                    return (
+                      <button
+                        key={category}
+                        onClick={() => handleCategoryClick(category)}
+                        className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          isActive 
+                            ? "bg-uii-navy text-white shadow-md" 
+                            : "text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800"
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
       </div>
