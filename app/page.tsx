@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Link from "next/link"; // Import Link
 import { Header } from "@/components/layout/Header";
-// SearchBar dan CategoryTabs dihapus dari sini karena sudah pindah ke Header
 import { Card } from "@/components/ui/Card";
 import { links } from "@/data/links";
 import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Sparkles } from "lucide-react"; // Import Icons
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,7 +37,7 @@ export default function Home() {
       />
 
       {/* Hero Section - Lebih Ringkas */}
-      <section className="relative pt-12 pb-12 px-4 overflow-hidden">
+      <section className="relative pt-12 pb-8 px-4 overflow-hidden">
         {/* Background Gradient UII - Lebih Soft */}
         <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-b from-uii-navy/5 via-uii-navy/5 to-transparent -z-10" />
         
@@ -59,6 +60,48 @@ export default function Home() {
             </p>
           </motion.div>
         </div>
+      </section>
+
+      {/* --- NEW: Automata Featured Banner --- */}
+      <section className="container-width px-4 mb-12">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-uii-navy to-uii-navy-light p-6 md:p-10 shadow-2xl text-white group"
+        >
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors duration-500" />
+          <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-uii-gold/20 rounded-full blur-2xl" />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="flex items-center gap-2">
+                <span className="flex items-center px-3 py-1 rounded-full bg-uii-gold text-uii-navy text-xs font-bold uppercase tracking-wider shadow-sm">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Terbaru
+                </span>
+                <span className="text-slate-300 text-sm font-medium border-l border-white/20 pl-2">
+                  Vol. 7 No. 1
+                </span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-serif font-bold leading-tight">
+                AUTOMATA Open Submission
+              </h3>
+              <p className="text-slate-200 text-sm md:text-base leading-relaxed opacity-90">
+                Pusat publikasi ilmiah mahasiswa Informatika. Dapatkan informasi lengkap mengenai syarat, template IEEE, dan alur pengajuan.
+              </p>
+            </div>
+
+            <Link 
+              href="/automata" 
+              className="shrink-0 flex items-center px-6 py-3 bg-white text-uii-navy font-bold rounded-xl shadow-lg hover:bg-slate-50 transition-all hover:scale-105 active:scale-95 group/btn"
+            >
+              Lihat Informasi
+              <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </motion.div>
       </section>
 
       {/* Links Grid Section */}
